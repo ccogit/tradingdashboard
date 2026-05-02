@@ -10,8 +10,8 @@ class Settings(BaseSettings):
     snapshot_interval_seconds: int = 30
     ws_heartbeat_seconds: int = 20
 
-    # Database
-    database_url: str = "postgresql+asyncpg://ibkr:ibkr@localhost:5432/ibkr_dashboard"
+    # Database (required — set DATABASE_URL to your Neon connection string)
+    database_url: str
 
     # Clerk
     clerk_jwks_url: str = ""
