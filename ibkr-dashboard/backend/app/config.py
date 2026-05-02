@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     clerk_secret_key: str = ""
 
     # IB Gateway
-    ib_gateway_host: str = "ib-gateway"
+    ib_gateway_host: str = "localhost"
     ib_gateway_port: int = 4002
     ib_client_id: int = 17
     ib_account_id: str = ""
