@@ -1,0 +1,24 @@
+app = "ibkr-dashboard-gateway"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  TRADING_MODE = "paper"
+  READ_ONLY_API = "no"
+  TZ = "America/New_York"
+
+# Only internal — no public HTTP service.
+# Backend reaches this via ibkr-dashboard-gateway.internal:4002
+[[services]]
+  protocol = "tcp"
+  internal_port = 4002
+
+  [[services.ports]]
+    port = 4002
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1
