@@ -1,0 +1,60 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ibkr
+      POSTGRES_PASSWORD: ibkr
+      POSTGRES_DB: ibkr_dashboard
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ibkr"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  ib-gateway:
+    image: ghcr.io/gnzsnz/ib-gateway:stable
+    restart: unless-stopped
+    environment:
+      TWS_USERID: ${IB_USERNAME}
+      TWS_PASSWORD: ${IB_PASSWORD}
+      TRADING_MODE: ${TRADING_MODE:-paper}
+      READ_ONLY_API: "no"
+      VNC_SERVER_PASSWORD: ${VNC_PASSWORD:-changeme}
+      TZ: America/New_York
+    ports:
+      - "4002:4002"
+      - "4001:4001"
+      - "5900:5900"
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 4002 || nc -z localhost 4001"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    depends_on:
+      db: { condition: service_healthy }
+      ib-gateway: { condition: service_healthy }
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://ibkr:ibkr@db:5432/ibkr_dashboard
+      IB_GATEWAY_HOST: ib-gateway
+      CORS_ORIGINS: http://localhost:5173
+    ports: ["8000:8000"]
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers"]
+
+  frontend:
+    build:
+      context: ./frontend
+      target: dev
+    depends_on: [backend]
+    env_file: .env
+    ports: ["5173:5173"]
+    command: ["pnpm", "dev", "--host", "0.0.0.0"]
+
+volumes:
+  pgdata:
