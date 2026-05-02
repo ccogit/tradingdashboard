@@ -2,7 +2,7 @@ app = "ibkr-dashboard"
 primary_region = "iad"
 
 [build]
-  dockerfile = "Dockerfile"
+  dockerfile = "combined/Dockerfile"
 
 [env]
   PORT = "8000"
@@ -24,7 +24,6 @@ primary_region = "iad"
     path = "/api/v1/health"
     timeout = "10s"
 
-# Single 512MB machine — IB Gateway (Java) + FastAPI both fit here
 [[vm]]
   memory = "512mb"
   cpu_kind = "shared"
