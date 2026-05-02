@@ -1,6 +1,10 @@
 from pydantic_settings import BaseSettings
 from functools import lru_cache
 from typing import Literal
+from pathlib import Path
+
+# ibkr-dashboard/.env — one level above backend/
+_ENV_FILE = Path(__file__).resolve().parents[2] / ".env"
 
 
 class Settings(BaseSettings):
@@ -32,7 +36,7 @@ class Settings(BaseSettings):
     anthropic_max_tokens: int = 4096
 
     class Config:
-        env_file = ".env"
+        env_file = str(_ENV_FILE)
         extra = "ignore"
 
 
