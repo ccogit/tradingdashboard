@@ -9,8 +9,10 @@ RUN uv pip install --system -e . 2>/dev/null; pip install fastapi uvicorn sqlmod
 FROM ghcr.io/gnzsnz/ib-gateway:stable
 
 # Install Python 3.12 alongside the existing IB Gateway
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3.12 python3.12-dev python3-pip python3-venv \
+RUN apt-get update && apt-get install -y --no-install-recommends software-properties-common \
+    && add-apt-repository ppa:deadsnakes/ppa \
+    && apt-get update && apt-get install -y --no-install-recommends \
+    python3.12 python3.12-dev python3.12-distutils \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy installed packages from builder
