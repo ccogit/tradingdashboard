@@ -22,6 +22,10 @@ COPY --from=pybuilder /usr/local/bin/alembic /usr/local/bin/alembic
 WORKDIR /backend
 COPY ../backend/ .
 
+# Verify IB Gateway startup script exists (fail fast at build time)
+RUN test -f /home/ibgateway/scripts/run.sh || \
+    (echo "ERROR: /home/ibgateway/scripts/run.sh not found in base image" && exit 1)
+
 # Startup script
 COPY start.sh /start.sh
 RUN chmod +x /start.sh

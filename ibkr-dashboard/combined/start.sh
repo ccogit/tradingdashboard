@@ -2,9 +2,7 @@
 set -e
 
 echo "==> Starting IB Gateway..."
-# gnzsnz/ib-gateway uses this script as its entrypoint
-/opt/ibc/scripts/ibcstart.sh &
-IB_PID=$!
+/home/ibgateway/scripts/run.sh &
 
 # Wait up to 120s for the gateway port to open
 GATEWAY_PORT=${IB_GATEWAY_PORT:-4002}
